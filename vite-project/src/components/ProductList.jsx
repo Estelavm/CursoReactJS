@@ -94,6 +94,8 @@ export default function ProductList() {
   }, [productos]);
 
   return (
+  <>
+    <h2>Nuestros productos</h2>
     <div className="productos">
       {productos.map((producto) => (
         <ProductCard
@@ -104,5 +106,6 @@ export default function ProductList() {
         />
       ))}
     </div>
-  );
+  </>
+);
 }

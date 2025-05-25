@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from '../assets/Images/Logo.png'; 
+import logo from '../assets/Images/Logo.png';
 
-export default function Header() {
+export default function Header({ estaLogueado, setEstaLogueado }) {
   const [activo, setActivo] = useState(false);
   const location = useLocation();
 
@@ -11,7 +11,7 @@ export default function Header() {
   }, [location]);
 
   return (
-    <header> 
+    <header>
       <nav>
         <div className="container-fluid">
           <div className="Logo d-flex align-items-center">
@@ -39,13 +39,20 @@ export default function Header() {
               </li>
               <li className="Links cart">
                 <Link to="/carrito" onClick={() => setActivo(false)}>
-                <i className="fas fa-shopping-cart"></i>
-              </Link>
+                  <i className="fas fa-shopping-cart"></i>
+                </Link>
+              </li>
+              <li className="Links cart">
+                {estaLogueado ? (
+                  <button className="cart-btn btn-login" onClick={() => setEstaLogueado(false)}>Cerrar sesión</button>
+                ) : (
+                  <Link class="btn-login" to="/login">Iniciar sesión</Link>
+                )}
               </li>
             </ul>
           </div>
         </div>
-      </nav>          
+      </nav>
     </header>
   );
 }

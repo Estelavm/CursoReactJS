@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { useEffect } from 'react'; // AGREGADO
+import { useEffect, useState } from 'react';
 import Header from './components/Header.jsx';
 import Presentacion from './components/Presentation.jsx';
 import ProductList from './components/ProductList.jsx';
@@ -8,10 +8,13 @@ import Opiniones from './components/ReviewCard.jsx';
 import Cart from './components/Cart.jsx';
 import ContactForm from './components/ContactForm.jsx';
 import Footer from './components/Footer.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Login from './components/Login.jsx';
 import './assets/styles/style.css';
 
 function App() {
   const location = useLocation();
+  const [estaLogueado, setEstaLogueado] = useState(false);
 
   useEffect(() => {
     if (location.pathname === "/" && location.hash) {
@@ -27,7 +30,7 @@ function App() {
 
   return (
     <>
-      <Header />
+      <Header estaLogueado={estaLogueado} setEstaLogueado={setEstaLogueado} />
       <main>
         <Routes>
           <Route
@@ -52,7 +55,13 @@ function App() {
               </>
             }
           />
-          <Route path="/carrito" element={<Cart />} />
+          <Route path="/carrito" element={
+              <ProtectedRoute estaLogueado={estaLogueado}>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/login" element={<Login setEstaLogueado={setEstaLogueado} />} />
         </Routes>
       </main>
       <Footer />

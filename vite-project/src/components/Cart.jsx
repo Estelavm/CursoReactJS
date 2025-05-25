@@ -59,7 +59,7 @@ export default function Cart() {
                   />
                 </p>
                 <button
-                  className="btn-eliminar"
+                  className="btn-eliminar btn-descripcion"
                   onClick={() => eliminarProducto(index)}
                 >
                   Eliminar
@@ -67,7 +67,7 @@ export default function Cart() {
               </div>
             ))}
             <div className="total">Total: ${total.toFixed(2)}</div>
-            <button id="vaciar-carrito" onClick={vaciarCarrito}>
+            <button className="btn-descripcion" id="vaciar-carrito" onClick={vaciarCarrito}>
               Vaciar carrito
             </button>
             <button
