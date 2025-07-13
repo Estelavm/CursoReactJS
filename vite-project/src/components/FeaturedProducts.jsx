@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useCarrito } from "../context/CarritoContext";
 
 const traducciones = {
   "Apam balik": "Pancake de frijoles",
@@ -17,6 +18,7 @@ export default function ProductosSelectos() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const { agregarProducto } = useCarrito();
 
   useEffect(() => {
     setLoading(true);
@@ -42,36 +44,35 @@ export default function ProductosSelectos() {
       });
   }, []);
 
-  function agregarAlCarrito(producto) {
-    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    const yaExiste = carrito.find((p) => p.nombre === producto.nombre);
-    if (yaExiste) {
-      yaExiste.cantidad++;
-    } else {
-      carrito.push(producto);
+  const manejarAgregar = (producto) => {
+    if (!producto || !producto.nombre) {
+      console.warn("Producto inválido:", producto);
+      return;
     }
-    localStorage.setItem("carrito", JSON.stringify(carrito));
-  }
+    agregarProducto(producto);
+  };
 
   if (loading) return <p>Cargando productos...</p>;
   if (error) return <p>Error al cargar productos.</p>;
 
   return (
-  <section >
-    <h2>Productos Selectos</h2>
-    <div className="productos productos_selectos">
-      {productos.map((p) => (
-        <div key={p.id} className="producto">
-          <img src={p.imagen} alt={p.nombre} />
-          <h2>{p.nombre}</h2>
-          <p className="precio">${p.precio}</p>
-          <button className="btn-agregar btn-descripcion" onClick={() => agregarAlCarrito(p)}>
-            Agregar al carrito
-          </button>
-        </div>
-      ))}
-    </div>
-  </section>
-);
-
+    <section>
+      <h2>Productos Selectos</h2>
+      <div className="productos productos_selectos">
+        {productos.map((p) => (
+          <div key={p.id} className="producto">
+            <img src={p.imagen} alt={p.nombre} />
+            <h2>{p.nombre}</h2>
+            <p className="precio">${p.precio}</p>
+            <button
+              className="btn-agregar btn-descripcion"
+              onClick={() => manejarAgregar(p)}
+            >
+              Agregar al carrito
+            </button>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 }

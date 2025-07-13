@@ -1,31 +1,15 @@
-import { useState, useEffect } from "react";
+import { useCarrito } from "../context/CarritoContext";
 
 export default function Cart() {
-  const [carrito, setCarrito] = useState([]);
-
-  useEffect(() => {
-    const carritoGuardado = JSON.parse(localStorage.getItem("carrito")) || [];
-    setCarrito(carritoGuardado);
-  }, []);
+  const { carrito, eliminarProducto, vaciarCarrito, actualizarProductoCantidad } = useCarrito();
 
   function actualizarCantidad(index, cantidad) {
     if (cantidad < 1) return;
-    const copia = [...carrito];
-    copia[index].cantidad = cantidad;
-    setCarrito(copia);
-    localStorage.setItem("carrito", JSON.stringify(copia));
-  }
 
-  function eliminarProducto(index) {
-    const copia = [...carrito];
-    copia.splice(index, 1);
-    setCarrito(copia);
-    localStorage.setItem("carrito", JSON.stringify(copia));
-  }
+    const producto = carrito[index];
+    if (!producto) return;
 
-  function vaciarCarrito() {
-    setCarrito([]);
-    localStorage.removeItem("carrito");
+    actualizarProductoCantidad(producto.nombre, cantidad);
   }
 
   const total = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
@@ -43,9 +27,7 @@ export default function Cart() {
                 <img src={producto.imagen} alt={producto.nombre} />
                 <h3>{producto.nombre}</h3>
                 <p>{producto.descripcion}</p>
-                <div className="precio">
-                  ${producto.precio * producto.cantidad}
-                </div>
+                <div className="precio">${producto.precio * producto.cantidad}</div>
                 <p>
                   Cantidad:{" "}
                   <input
@@ -53,14 +35,12 @@ export default function Cart() {
                     className="cantidad"
                     value={producto.cantidad}
                     min="1"
-                    onChange={(e) =>
-                      actualizarCantidad(index, parseInt(e.target.value))
-                    }
+                    onChange={(e) => actualizarCantidad(index, parseInt(e.target.value))}
                   />
                 </p>
                 <button
                   className="btn-eliminar btn-descripcion"
-                  onClick={() => eliminarProducto(index)}
+                  onClick={() => eliminarProducto(producto.nombre)}
                 >
                   Eliminar
                 </button>

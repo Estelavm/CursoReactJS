@@ -1,17 +1,12 @@
 import { useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
-import imgChocolateBlanco from '../assets/Images/Chocolate-Blanco.png'
-import imgChocotorta from '../assets/Images/Chocotorta.png'
-import imgMerengada from '../assets/Images/Merengada.png'
-import imgMousse from '../assets/Images/Mousse.png'
-import imgRedVelvet from '../assets/Images/Red-Velvet.png'
-import imgTortaFraiser from '../assets/Images/Torta-Fraiser.png'
+import { useCarrito } from "../context/CarritoContext";
 
 const productosIniciales = [
   {
     id: 1,
     nombre: "Torta de Chocolate Blanco",
-    imagen: imgChocolateBlanco,  
+    imagen: "https://i.imgur.com/0klIN4g.png",  
     precio: 4500,
     descripcion:
       "Un delicioso bizcocho suave y esponjoso, relleno y cubierto con una rica capa de chocolate blanco.",
@@ -20,7 +15,7 @@ const productosIniciales = [
   {
     id: 2,
     nombre: "Chocotorta",
-    imagen: imgChocotorta,
+    imagen: "https://i.imgur.com/YRvJ7HE.png",
     precio: 3500,
     descripcion: "Hecha con capas de galletitas de chocolate bañadas en café, intercaladas con una suave crema de queso y dulce de leche.",
     mostrarDescripcion: false,
@@ -28,7 +23,7 @@ const productosIniciales = [
   {
     id: 3,
     nombre: "Torta Merengada",
-    imagen: imgMerengada,
+    imagen: "https://i.imgur.com/R4fctYS.png",
     precio: 2500,
     descripcion: "Una torta ligera y aireada con capas de merengue crocante y una suave crema.",
     mostrarDescripcion: false,
@@ -36,7 +31,7 @@ const productosIniciales = [
   {
     id: 4,
         nombre: "Mousse de Chocolate",
-        imagen: imgMousse,
+        imagen: "https://i.imgur.com/Msf40E7.png",
         precio: 5000,
         descripcion: "Un postre suave y cremoso con un intenso sabor a chocolate, ideal para los fanáticos del chocolate en su forma más ligera.",
     mostrarDescripcion: false,
@@ -44,7 +39,7 @@ const productosIniciales = [
   {
     id: 5,
         nombre: "Torta Red Velvet",
-        imagen: imgRedVelvet,
+        imagen: "https://i.imgur.com/gc2p7EP.png",
         precio: 3500,
         descripcion: "Un bizcocho esponjoso de color rojo vibrante, cubierto con una suave crema de queso, combinando el sabor sutil del cacao.",
     mostrarDescripcion: false,
@@ -52,7 +47,7 @@ const productosIniciales = [
   {
     id: 6,
         nombre: "Torta Fraiser",
-        imagen: imgTortaFraiser,
+        imagen: "https://i.imgur.com/asdvuFp.png",
         precio: 5000,
         descripcion: "Un bizcocho suave relleno con crema pastelera y fresas frescas, creando una combinación de sabores frescos y dulces.",
     mostrarDescripcion: false,
@@ -61,6 +56,7 @@ const productosIniciales = [
 
 export default function ProductList() {
   const [productos, setProductos] = useState(productosIniciales);
+  const { agregarProducto } = useCarrito();
 
   // Mostrar/ocultar descripción
   function toggleDescripcion(id) {
@@ -69,21 +65,6 @@ export default function ProductList() {
         p.id === id ? { ...p, mostrarDescripcion: !p.mostrarDescripcion } : p
       )
     );
-  }
-
-  // Agregar producto al carrito en localStorage
-  function agregarAlCarrito(producto) {
-    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-
-    const productoExistente = carrito.find((item) => item.nombre === producto.nombre);
-
-    if (productoExistente) {
-      productoExistente.cantidad++;
-    } else {
-      carrito.push({ ...producto, cantidad: 1 });
-    }
-
-    localStorage.setItem("carrito", JSON.stringify(carrito));
   }
 
   useEffect(() => {
@@ -101,7 +82,7 @@ export default function ProductList() {
         <ProductCard
           key={producto.id}
           producto={producto}
-          agregarAlCarrito={agregarAlCarrito}
+          agregarAlCarrito={agregarProducto}
           toggleDescripcion={toggleDescripcion}
         />
       ))}

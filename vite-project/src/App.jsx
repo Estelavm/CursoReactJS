@@ -1,5 +1,6 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { Routes, Route, useLocation} from 'react-router-dom';
+import { useEffect } from 'react';
+import { CarritoProvider } from "./context/CarritoContext";
 import Header from './components/Header.jsx';
 import Presentacion from './components/Presentation.jsx';
 import ProductList from './components/ProductList.jsx';
@@ -10,27 +11,29 @@ import ContactForm from './components/ContactForm.jsx';
 import Footer from './components/Footer.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Login from './components/Login.jsx';
+import AdminProductos from "./components/AdminProductos";
 import './assets/styles/style.css';
 
 function App() {
   const location = useLocation();
-  const [estaLogueado, setEstaLogueado] = useState(false);
 
   useEffect(() => {
-    if (location.pathname === "/" && location.hash) {
-      const id = location.hash.replace("#", "");
+  if (location.pathname === "/" && location.hash) {
+    const id = location.hash.replace("#", "");
+    const scroll = () => {
       const el = document.getElementById(id);
       if (el) {
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: "smooth" });
-        }, 100);
+        el.scrollIntoView({ behavior: "smooth" });
       }
-    }
-  }, [location]);
+    };
+    setTimeout(scroll, 300);
+  }
+}, [location]);
+
 
   return (
-    <>
-      <Header estaLogueado={estaLogueado} setEstaLogueado={setEstaLogueado} />
+    <CarritoProvider>
+      <Header />
       <main>
         <Routes>
           <Route
@@ -56,16 +59,20 @@ function App() {
             }
           />
           <Route path="/carrito" element={
-              <ProtectedRoute estaLogueado={estaLogueado}>
-                <Cart />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/login" element={<Login setEstaLogueado={setEstaLogueado} />} />
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/productos" element={
+            <ProtectedRoute>
+              <AdminProductos />
+            </ProtectedRoute>
+          } />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </main>
       <Footer />
-    </>
+    </CarritoProvider>
   );
 }
 

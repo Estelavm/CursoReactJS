@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; 
 import logo from '../assets/Images/Logo.png';
 
-export default function Header({ estaLogueado, setEstaLogueado }) {
+export default function Header() {
   const [activo, setActivo] = useState(false);
   const location = useLocation();
+  const { usuario, estaLogueado, logout } = useAuth();
 
   useEffect(() => {
     setActivo(false);
@@ -26,17 +28,24 @@ export default function Header({ estaLogueado, setEstaLogueado }) {
           <div className={`navbar-collapse ${activo ? "active" : ""}`} id="navbarNav">
             <ul id="nav-links">
               <li className="Links">
-                <Link to="/#presentacion" onClick={() => setActivo(false)}>Inicio</Link>
+                <Link to="/#presentacion">Inicio</Link>
               </li>
               <li className="Links">
-                <Link to="/#productos" onClick={() => setActivo(false)}>Productos</Link>
+                <Link to="/#productos">Productos</Link>
               </li>
               <li className="Links">
-                <Link to="/#opiniones" onClick={() => setActivo(false)}>Reseñas</Link>
+                <Link to="/#opiniones">Reseñas</Link>
               </li>
               <li className="Links">
-                <Link to="/#form" onClick={() => setActivo(false)}>Contacto</Link>
+                <Link to="/#form">Contacto</Link>
               </li>
+
+              {estaLogueado && usuario?.rol === "admin" && (
+                <li className="Links">
+                  <Link to="/admin/productos" onClick={() => setActivo(false)}>Gestionar Productos</Link>
+                </li>
+              )}
+
               <li className="Links cart">
                 <Link to="/carrito" onClick={() => setActivo(false)}>
                   <i className="fas fa-shopping-cart"></i>
@@ -44,9 +53,9 @@ export default function Header({ estaLogueado, setEstaLogueado }) {
               </li>
               <li className="Links cart">
                 {estaLogueado ? (
-                  <button className="cart-btn btn-login" onClick={() => setEstaLogueado(false)}>Cerrar sesión</button>
+                  <button className="cart-btn btn-login" onClick={logout}>Cerrar sesión</button>
                 ) : (
-                  <Link class="btn-login" to="/login">Iniciar sesión</Link>
+                  <Link className="btn-login" to="/login">Iniciar sesión</Link>
                 )}
               </li>
             </ul>
