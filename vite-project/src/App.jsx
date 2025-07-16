@@ -12,7 +12,12 @@ import Footer from './components/Footer.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Login from './components/Login.jsx';
 import AdminProductos from "./components/AdminProductos";
-import './assets/styles/style.css';
+import GlobalStyles from './styled/GlobalStyles.js';
+import Layout from "./components/Layout.jsx";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+//import './assets/styles/style.css';
 
 function App() {
   const location = useLocation();
@@ -33,45 +38,52 @@ function App() {
 
   return (
     <CarritoProvider>
-      <Header />
+      <GlobalStyles />
+      <ToastContainer />
       <main>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <section id="presentacion">
-                  <Presentacion />
-                </section>
-                <section id="productos">
-                  <ProductList />
-                </section>
-                <section id="destacados">
-                  <FeaturedProducts />
-                </section>
-                <section id="opiniones">
-                  <Opiniones />
-                </section>
-                <section id="form">
-                  <ContactForm />
-                </section>
-              </>
-            }
-          />
-          <Route path="/carrito" element={
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/productos" element={
-            <ProtectedRoute>
-              <AdminProductos />
-            </ProtectedRoute>
-          } />
-          <Route path="/login" element={<Login />} />
-        </Routes>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Layout>
+                  <>
+                    <section id="presentacion">
+                      <Presentacion />
+                    </section>
+                    <section id="productos">
+                      <ProductList />
+                    </section>
+                    <section id="destacados">
+                      <FeaturedProducts />
+                    </section>
+                    <section id="opiniones">
+                      <Opiniones />
+                    </section>
+                    <section id="form">
+                      <ContactForm />
+                    </section>
+                  </>
+                </Layout>
+              }
+            />
+            <Route path="/carrito" element={
+              <Layout>
+                <ProtectedRoute>
+                  <Cart />
+                </ProtectedRoute>
+              </Layout>
+            } />
+            <Route path="/admin/productos" element={
+              <Layout>
+                <ProtectedRoute>
+                  <AdminProductos />
+                </ProtectedRoute>
+              </Layout>
+            } />
+            <Route path="/login" element={<Login />} />
+          </Routes>
       </main>
-      <Footer />
+      
     </CarritoProvider>
   );
 }
