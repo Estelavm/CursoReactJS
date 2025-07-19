@@ -6,12 +6,64 @@ import {
   ProductosGrid,
   ProductoCard,
   Precio,
-  BotonAgregar,
 } from "../styled/FeaturedProductsStyles";
 import { FaCartPlus, FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Helmet } from "react-helmet-async";
+import styled from "@emotion/styled";
+
+const Buscador = styled.input`
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  margin: 0 auto 2rem auto;
+  display: block;
+  font-family: var(--font-family-main);
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 2px solid #a355c0;
+
+  &:focus {
+    outline: none;
+    border-color: #6c63ff;
+  }
+`;
+
+const Paginacion = styled.div`
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+`;
+
+const BotonPagina = styled.button`
+  background-color: var(--background-color-header);
+  color: var(--color-text);
+  border: 2px solid #a355c0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: var(--font-family-main);
+
+  &:hover:not(:disabled) {
+    background-color: #a355c0;
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+`;
+
+const InfoPagina = styled.span`
+  font-family: var(--font-family-main);
+  font-weight: bold;
+  color: var(--color-text);
+  align-self: center;
+`;
 
 const traducciones = {
   "Apam balik": "Pancake de frijoles",
@@ -27,10 +79,15 @@ function traducir(nombre) {
 }
 
 export default function ProductosSelectos() {
-  const [productos, setProductos] = useState([]);
+  const [productosOriginales, setProductosOriginales] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
+  const [paginaActual, setPaginaActual] = useState(1);
+  const productosPorPagina = 3;
+
+  const { agregarProducto } = useCarrito();
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const { agregarProducto } = useCarrito();
 
   useEffect(() => {
     setLoading(true);
@@ -48,7 +105,7 @@ export default function ProductosSelectos() {
           cantidad: 1,
           mostrarDescripcion: false,
         }));
-        setProductos(primeros6);
+        setProductosOriginales(primeros6);
         setLoading(false);
       })
       .catch(() => {
@@ -58,7 +115,7 @@ export default function ProductosSelectos() {
   }, []);
 
   const toggleDescripcion = (id) => {
-    setProductos((prev) =>
+    setProductosOriginales((prev) =>
       prev.map((p) =>
         p.id === id ? { ...p, mostrarDescripcion: !p.mostrarDescripcion } : p
       )
@@ -66,13 +123,27 @@ export default function ProductosSelectos() {
   };
 
   const manejarAgregar = (producto) => {
-    if (!producto || !producto.nombre) {
-      console.warn("Producto inválido:", producto);
-      toast.error("Producto inválido.");
-      return;
-    }
     agregarProducto(producto);
     toast.success(`${producto.nombre} agregado al carrito`);
+  };
+
+  const productosFiltrados = productosOriginales.filter((p) =>
+    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
+  const indexUltimo = paginaActual * productosPorPagina;
+  const indexPrimero = indexUltimo - productosPorPagina;
+  const productosVisibles = productosFiltrados.slice(indexPrimero, indexUltimo);
+
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [busqueda]);
+
+  const cambiarPagina = (num) => {
+    const total = Math.ceil(productosFiltrados.length / productosPorPagina);
+    if (num < 1) num = 1;
+    if (num > total) num = total;
+    setPaginaActual(num);
   };
 
   if (loading) return <p>Cargando productos...</p>;
@@ -89,8 +160,17 @@ export default function ProductosSelectos() {
       </Helmet>
 
       <Title id="titulo-productos-selectos">Productos Selectos</Title>
+
+      <Buscador
+        type="text"
+        placeholder="Buscar postre..."
+        value={busqueda}
+        onChange={(e) => setBusqueda(e.target.value)}
+        aria-label="Buscar productos por nombre"
+      />
+
       <ProductosGrid>
-        {productos.map((p) => (
+        {productosVisibles.map((p) => (
           <ProductoCard key={p.id}>
             <img src={p.imagen} alt={`Imagen de ${p.nombre}`} />
             <h2>{p.nombre}</h2>
@@ -131,6 +211,30 @@ export default function ProductosSelectos() {
           </ProductoCard>
         ))}
       </ProductosGrid>
+
+      <Paginacion>
+        <BotonPagina
+          onClick={() => cambiarPagina(paginaActual - 1)}
+          disabled={paginaActual === 1}
+        >
+          Anterior
+        </BotonPagina>
+
+        <InfoPagina>
+          Página {paginaActual} de{" "}
+          {Math.ceil(productosFiltrados.length / productosPorPagina)}
+        </InfoPagina>
+
+        <BotonPagina
+          onClick={() => cambiarPagina(paginaActual + 1)}
+          disabled={
+            paginaActual ===
+            Math.ceil(productosFiltrados.length / productosPorPagina)
+          }
+        >
+          Siguiente
+        </BotonPagina>
+      </Paginacion>
 
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </Section>

@@ -7,8 +7,10 @@ export const Section = styled.section`
 `;
 
 export const Title = styled.h2`
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
+  margin-top: 5rem;
   font-family: var(--font-family-header);
+  font-weight: var(--font-weight-bold);
 `;
 
 export const ProductosGrid = styled.div`

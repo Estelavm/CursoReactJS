@@ -17,10 +17,11 @@ export const ParrafoResenas = styled.p`
 `;
 
 export const OpinionesSection = styled.section`
+  display: grid
   grid-template-columns: repeat(auto-fit, minmax(20vw, 1fr));
   grid-template-rows: auto 1fr;
   gap: 5vw;
-  width: 100vw;
+  width: 100%;
   padding: 5% 0;
   justify-items: center;
   border-bottom: 2px solid #ddd;
@@ -28,6 +29,11 @@ export const OpinionesSection = styled.section`
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 500px) {
+    padding: 10% 5%;
+    gap: 8vw;
   }
 `;
 

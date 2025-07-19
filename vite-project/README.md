@@ -1,12 +1,77 @@
-# React + Vite
+# 🧁 Delicias del Alma
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web de repostería artesanal desarrollada con React y Vite. Permite visualizar productos destacados, agregar al carrito, buscar, paginar, ver reseñas, mirar un video institucional y mucho más. El diseño es responsive y accesible.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📦 Tecnologías utilizadas
 
-## Expanding the ESLint configuration
+- React + Vite
+- @emotion/styled y styled-components
+- Context API (para carrito y productos)
+- React Helmet Async
+- React Icons
+- React Toastify
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🚀 Instalación y uso
+
+1. **Cloná el repositorio**
+
+git clone https://github.com/Estelavm/CursoReactJS.git
+
+2. **Instalá las dependencias**
+
+npm install
+
+
+3. **Levanta la app en desarrollo**
+
+npm run dev
+
+4. **Abrí en el navegador**
+
+http://localhost:5173/
+
+---
+
+## 🎯 Funcionalidades principales
+
+🛍️ Listado de productos con buscador y paginación.
+
+💜 Productos selectos obtenidos desde una API externa.
+
+🧠 Estado global del carrito gestionado con Context API.
+
+📱 Diseño responsive adaptado a móviles, tablets y escritorio.
+
+👀 Mostrar/ocultar descripción del producto.
+
+🔊 Feedback inmediato con notificaciones (Toast).
+
+🧩 Reseñas de clientes, video institucional y presentación.
+
+♿ Accesibilidad: uso de aria-label, roles y elementos semánticos.
+
+
+## ⚙️ Scripts disponibles
+
+npm run dev: Inicia el servidor de desarrollo.
+
+npm run build: Genera una versión de producción.
+
+npm run preview: Visualiza la versión de producción localmente.
+
+
+## 🔍 Pruebas de compatibilidad
+
+La app fue testeada en:
+
+📱 Móviles (320px+, usando DevTools de Chrome)
+
+📱 Tablets (768px+)
+
+💻 Escritorio (1024px+)
+
+

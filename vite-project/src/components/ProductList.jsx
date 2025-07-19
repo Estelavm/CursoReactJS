@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; 
 import { useCarrito } from "../context/CarritoContext";
+import { useProductos } from "../context/ProductosContext";
 import {
   Titulo,
+  ContenedorProductos,
   TarjetaProducto,
   Precio,
   BotonAgregar,
@@ -10,89 +12,106 @@ import {
 import { FaCartPlus, FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
+import styled from "@emotion/styled";
 
-const productosIniciales = [
-  {
-    id: 1,
-    nombre: "Torta de Chocolate Blanco",
-    imagen: "https://i.imgur.com/0klIN4g.png",
-    precio: 4500,
-    descripcion:
-      "Un delicioso bizcocho suave y esponjoso, relleno y cubierto con una rica capa de chocolate blanco.",
-    mostrarDescripcion: false,
-  },
-  {
-    id: 2,
-    nombre: "Chocotorta",
-    imagen: "https://i.imgur.com/YRvJ7HE.png",
-    precio: 3500,
-    descripcion:
-      "Hecha con capas de galletitas de chocolate bañadas en café, intercaladas con una suave crema de queso y dulce de leche.",
-    mostrarDescripcion: false,
-  },
-  {
-    id: 3,
-    nombre: "Torta Merengada",
-    imagen: "https://i.imgur.com/R4fctYS.png",
-    precio: 2500,
-    descripcion:
-      "Una torta ligera y aireada con capas de merengue crocante y una suave crema.",
-    mostrarDescripcion: false,
-  },
-  {
-    id: 4,
-    nombre: "Mousse de Chocolate",
-    imagen: "https://i.imgur.com/Msf40E7.png",
-    precio: 5000,
-    descripcion:
-      "Un postre suave y cremoso con un intenso sabor a chocolate, ideal para los fanáticos del chocolate en su forma más ligera.",
-    mostrarDescripcion: false,
-  },
-  {
-    id: 5,
-    nombre: "Torta Red Velvet",
-    imagen: "https://i.imgur.com/gc2p7EP.png",
-    precio: 3500,
-    descripcion:
-      "Un bizcocho esponjoso de color rojo vibrante, cubierto con una suave crema de queso, combinando el sabor sutil del cacao.",
-    mostrarDescripcion: false,
-  },
-  {
-    id: 6,
-    nombre: "Torta Fraiser",
-    imagen: "https://i.imgur.com/asdvuFp.png",
-    precio: 5000,
-    descripcion:
-      "Un bizcocho suave relleno con crema pastelera y fresas frescas, creando una combinación de sabores frescos y dulces.",
-    mostrarDescripcion: false,
-  },
-];
+const Buscador = styled.input`
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  margin: 0 auto 2rem auto;
+  display: block;
+  font-family: var(--font-family-main);
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 2px solid #a355c0;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #6c63ff;
+  }
+`;
+
+const Paginacion = styled.div`
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+`;
+
+const BotonPagina = styled.button`
+  background-color: var(--background-color-header);
+  color: var(--color-text);
+  border: 2px solid #a355c0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: var(--font-family-main);
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #a355c0;
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+`;
+
+const InfoPagina = styled.span`
+  font-family: var(--font-family-main);
+  font-weight: bold;
+  color: var(--color-text);
+  align-self: center;
+`;
 
 export default function ProductList() {
-  const [productos, setProductos] = useState(productosIniciales);
+  const { productos } = useProductos();
   const { agregarProducto } = useCarrito();
 
-  function toggleDescripcion(id) {
-    setProductos((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? { ...p, mostrarDescripcion: !p.mostrarDescripcion }
-          : p
-      )
-    );
-  }
+  const [busqueda, setBusqueda] = useState("");
+  const [paginaActual, setPaginaActual] = useState(1);
+  const productosPorPagina = 3;
+
+  const productosConDescripcion = productos
+    ? productos.map((p) => ({ ...p }))
+    : [];
+
+  const productosFiltrados = productosConDescripcion.filter((p) =>
+    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
+  const indexUltimoProducto = paginaActual * productosPorPagina;
+  const indexPrimerProducto = indexUltimoProducto - productosPorPagina;
+  const productosVisibles = productosFiltrados.slice(
+    indexPrimerProducto,
+    indexUltimoProducto
+  );
+
+  const cambiarPagina = (num) => {
+    if (num < 1) num = 1;
+    else if (num > Math.ceil(productosFiltrados.length / productosPorPagina))
+      num = Math.ceil(productosFiltrados.length / productosPorPagina);
+    setPaginaActual(num);
+  };
+
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [busqueda]);
+
+  const [descVisible, setDescVisible] = useState({});
+
+  const toggleDescripcion = (id) => {
+    setDescVisible((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const manejarAgregar = (producto) => {
     agregarProducto(producto);
     toast.success(`${producto.nombre} agregado al carrito 🛒`);
   };
-
-  useEffect(() => {
-    console.log("Lista de productos disponibles:");
-    productos.forEach((producto, i) => {
-      console.log(`${i + 1}. ${producto.nombre}`);
-    });
-  }, [productos]);
 
   return (
     <>
@@ -107,51 +126,83 @@ export default function ProductList() {
       </Helmet>
 
       <Titulo>Nuestros productos</Titulo>
-      <div className="container">
-        <div className="row justify-content-center">
-          {productos.map((producto) => (
-            <div
+
+      <Buscador
+        type="text"
+        placeholder="Buscar producto..."
+        value={busqueda}
+        onChange={(e) => setBusqueda(e.target.value)}
+        aria-label="Buscar productos por nombre"
+      />
+
+      <ContenedorProductos role="list">
+        {productosVisibles.length === 0 ? (
+          <p>No hay productos disponibles.</p>
+        ) : (
+          productosVisibles.map((producto) => (
+            <TarjetaProducto
               key={producto.id}
-              className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center"
+              role="listitem"
+              aria-label={`Producto: ${producto.nombre}`}
             >
-              <TarjetaProducto>
-                <img src={producto.imagen} alt={producto.nombre} />
-                <h3>{producto.nombre}</h3>
-                <Precio>${producto.precio}</Precio>
+              <img src={producto.imagen} alt={producto.nombre} />
+              <h3>{producto.nombre}</h3>
+              <Precio>${producto.precio}</Precio>
 
-                <BotonDescripcion
-                  onClick={() => toggleDescripcion(producto.id)}
-                  aria-pressed={producto.mostrarDescripcion}
-                  aria-label={
-                    producto.mostrarDescripcion
-                      ? `Ocultar descripción de ${producto.nombre}`
-                      : `Ver descripción de ${producto.nombre}`
-                  }
-                >
-                  {producto.mostrarDescripcion ? (
-                    <>
-                      <FaEyeSlash aria-hidden="true" /> Ocultar
-                    </>
-                  ) : (
-                    <>
-                      <FaEye aria-hidden="true" /> Ver descripción
-                    </>
-                  )}
-                </BotonDescripcion>
+              <BotonDescripcion
+                onClick={() => toggleDescripcion(producto.id)}
+                aria-pressed={descVisible[producto.id] || false}
+                aria-label={
+                  descVisible[producto.id]
+                    ? `Ocultar descripción de ${producto.nombre}`
+                    : `Ver descripción de ${producto.nombre}`
+                }
+              >
+                {descVisible[producto.id] ? (
+                  <>
+                    <FaEyeSlash aria-hidden="true" /> Ocultar
+                  </>
+                ) : (
+                  <>
+                    <FaEye aria-hidden="true" /> Ver descripción
+                  </>
+                )}
+              </BotonDescripcion>
 
-                {producto.mostrarDescripcion && <p>{producto.descripcion}</p>}
+              {descVisible[producto.id] && <p>{producto.descripcion}</p>}
 
-                <BotonAgregar
-                  onClick={() => manejarAgregar(producto)}
-                  aria-label={`Agregar ${producto.nombre} al carrito`}
-                >
-                  <FaCartPlus aria-hidden="true" /> Agregar al carrito
-                </BotonAgregar>
-              </TarjetaProducto>
-            </div>
-          ))}
-        </div>
-      </div>
+              <BotonAgregar
+                onClick={() => manejarAgregar(producto)}
+                aria-label={`Agregar ${producto.nombre} al carrito`}
+              >
+                <FaCartPlus aria-hidden="true" /> Agregar al carrito
+              </BotonAgregar>
+            </TarjetaProducto>
+          ))
+        )}
+      </ContenedorProductos>
+
+      <Paginacion aria-label="Paginación de productos">
+        <BotonPagina
+          onClick={() => cambiarPagina(paginaActual - 1)}
+          disabled={paginaActual === 1}
+          aria-label="Página anterior"
+        >
+          Anterior
+        </BotonPagina>
+
+        <InfoPagina aria-live="polite" aria-atomic="true">
+          Página {paginaActual} de {Math.ceil(productosFiltrados.length / productosPorPagina)}
+        </InfoPagina>
+
+        <BotonPagina
+          onClick={() => cambiarPagina(paginaActual + 1)}
+          disabled={paginaActual === Math.ceil(productosFiltrados.length / productosPorPagina)}
+          aria-label="Página siguiente"
+        >
+          Siguiente
+        </BotonPagina>
+      </Paginacion>
     </>
   );
 }

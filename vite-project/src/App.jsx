@@ -8,7 +8,6 @@ import FeaturedProducts from './components/FeaturedProducts.jsx';
 import Opiniones from './components/ReviewCard.jsx';
 import Cart from './components/Cart.jsx';
 import ContactForm from './components/ContactForm.jsx';
-import Footer from './components/Footer.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Login from './components/Login.jsx';
 import AdminProductos from "./components/AdminProductos";
@@ -17,7 +16,6 @@ import Layout from "./components/Layout.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-//import './assets/styles/style.css';
 
 function App() {
   const location = useLocation();

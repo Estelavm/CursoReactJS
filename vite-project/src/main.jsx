@@ -5,7 +5,6 @@ import { CarritoProvider } from "./context/CarritoContext";
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ProductosProvider } from "./context/ProductosContext";
 import GlobalStyles from './styled/GlobalStyles.js';
-//import './assets/styles/style.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { HelmetProvider } from "react-helmet-async";
 import App from './App.jsx'

@@ -1,4 +1,3 @@
-import React from "react";
 import video from '../assets/Images/video.mp4';
 import {
   PresentationSection,
